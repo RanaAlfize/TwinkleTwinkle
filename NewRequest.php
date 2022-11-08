@@ -38,8 +38,10 @@
             </div>
             <!--WRITE THE ACTION-->
 
+
+
     <?php
-    if(isset($_POST['add'])) {
+    if(isset($_POST['add'])) { 
         include("config.php");
 
         $kidsName = addslashes ($_POST['kidsName']);
@@ -49,12 +51,24 @@
         $startDate = addslashes ($_POST['startDate']);
         $Duration = addslashes ($_POST['Duration']);
         $comments = addslashes ($_POST['comments']);
+        $status = 'Pendding';
+
+        ////////////////////////////////
+
+        //$checkn ='/[a-zA-Z\\s]\\,[a-zA-Z\\s]/'; 
+        //$checka = "/^\d(?:,\d)*$/" ;
+
+         //   if (!preg_match($checkn,$_POST['kidsName'])) 
+         //   echo '<script>alert("names can be only letters separated by commas")</script>';
+
+        //    if (!preg_match($checka,$_POST['age']))
+//echo '<script>alert("ages can only be digits separated by commas ")</script>'; 
 
         $user_id= $_SESSION["user_id"];
 
 
-        $sql = "INSERT INTO requests ". "(kidsName,Gender, age,TypeOfServese,startDate,Duration,comments,parentName 
-               ) ". "VALUES('$kidsName','$Gender','$age','$TypeOfServese','$startDate','$Duration','$comments','$user_id' )";
+        $sql = "INSERT INTO requests ". "(kidsName,Gender, age,TypeOfServese,startDate,Duration,comments,parentName,status 
+               ) ". "VALUES('$kidsName','$Gender','$age','$TypeOfServese','$startDate','$Duration','$comments','$user_id','$status' )";
 
         // mysqli_select_db('reservation');
         //$retval = mysqli_query( $sql );
@@ -64,58 +78,72 @@
            //   echo "Error: " . $sql . "<br>" . $mysqli->error;
         }
 
-        ?> 
-      <div calss="main center"style="width:500px; text-align:center; color:green font: size 500px;"> <?php echo "form submitted succefully" ?> </div>
-
-
+        ?> <div style="width:500px; text-align:center; color:green"> <?php echo "Entered data successfully\n"; ?> </div>
         <?php
 
         mysqli_close($mysqli);
     }else { ?>
 
 
-            <form method = "post"  action = "<?php $_PHP_SELF ?>">
+            <form method = "post"  action = "<?php $_PHP_SELF ?>" id="rForm" onsubmit="return validateform()" enctype="multipart/form-data">>
               
               <fieldset class="main content" >
                 
               <div class="cardFormGhada">
 
-                <h4> Enter child name </h4>
-                <input type="text" name="kidsName" placeholder="Child name">
-
-                <h4> Select child gender </h4>
-                <select name="Gender">
-                  <option selected>Gender</option>
-                  <option>girl</option>
-                  <option>boy</option>
+              <h4> Select Number Of Children  <span style="color:red">*</span></h4>
+                <select name="Gender" required>
+                  <option value="">choose</option>
+                  <option>1</option>
+                  <option>2</option>
+                  <option>3</option>
                 </select>
 
-                <h4> Select child age </h4>
-                <select name="age">
-                  <option selected>Child age</option>
-                  <option value="Months-2 years old">Months-2 years old</option>
-                  <option value="3-5 years old">3-5 years old</option>
-                  <option value="6-8 years old">6-8 years old</option>
-                  <option value="9-11 years old">9-11 years old</option>
+                <h4> Enter child name/s <span style="color:red">*</span></h4>
+                <input id ="kn" type="text" name="kidsName" placeholder="enter names separated by commas" required pattern="^[a-zA-Z]+(,[a-zA-Z]+)*$"autofocus required title="ONLY LETTERS AND COMMAS INBETWEEN ALLOWED">
+
+
+
+                <h4> Enter child/s age <span style="color:red">*</span></h4>
+                <input id ="ka"type="text" name="age" placeholder="enter ages separated by commas " required pattern="^[0-9]+(,[0-9]+)*$"autofocus required title="ONLY DIGITS AND COMMAS INBETWEEN ALLOWED">
+
+
+                <h4> Choose date of service <span style="color:red">*</span></h4>
+                <input type="date" name="startDate" required>
+
+                <h4> Select the service start time <span style="color:red">*</span></h4>
+                <select name="time" required>
+                  <option value="">Stating time </option>
+                  <option value="1-2 hours">7:00 am</option>
+                  <option value="2-3 hours">8:00 am</option>
+                  <option value="3-4 hours">9:00 am</option>
+                  <option value="5-6 hours">10:00 am</option>
+                  <option value="5-6 hours">11:00 am</option>
+                  <option value="5-6 hours">12:00 am</option>
+                  <option value="5-6 hours">3:00 pm</option>
+                  <option value="5-6 hours">4:00 pm</option>
+                  <option value="5-6 hours">5:00 pm</option>
+                  <option value="5-6 hours">6:00 pm</option>
+                  <option value="7-8 hours">7:00 pm</option>
+                  <option value="5-6 hours">8:00 pm</option>
+                  <option value="5-6 hours">9:00 pm</option>
+                  <option value="9-10 hours">10:00 pm</option>
                 </select>
 
-                <h4> Choose date of service &amp; service start time </h4>
-                <input type="date" name="startDate" >
-
-                <h4> Select the duration of the service</h4>
-                <select name="Duration">
-                  <option selected>Duration</option>
-                  <option value="1-2 hours">1-2 hours</option>
-                  <option value="2-3 hours">2-3 hours</option>
-                  <option value="3-4 hours">3-4 hours</option>
-                  <option value="5-6 hours">5-6 hours</option>
-                  <option value="7-8 hours">7-8 hours</option>
-                  <option value="9-10 hours">9-10 hours</option>
+                <h4> Select the duration of the service <span style="color:red">*</span></h4>
+                <select name="Duration" required>
+                  <option value="">Duration</option>
+                  <option value="1-2 hours">2 hours</option>
+                  <option value="2-3 hours">3 hours</option>
+                  <option value="3-4 hours">4 hours</option>
+                  <option value="5-6 hours">5 hours</option>
+                  <option value="7-8 hours">6 hours</option>
+                  <option value="9-10 hours">>6 hours</option>
                 </select>
 
-                <h4> Select the type of service that you prefer </h4>
-                <select name="TypeOfServese">
-                  <option selected>Select the service</option>
+                <h4> Select the type of service that you prefer <span style="color:red">*</span></h4>
+                <select name="TypeOfServese" required>
+                  <option value="">Select the service</option>
                   <option value="infant babysitting">infant babysitting</option>
                   <option value="help in homework">help in homework</option>
                   <option value="take care of children inside/outside home">take care of children inside/outside home</option>
@@ -125,7 +153,7 @@
                 </select>
 
                 <h4> Do you have any notes? write them down! </h4>
-                <textarea name="comments" rows="5" cols="50" > </textarea>
+                <textarea name="comments" rows="5" cols="50" required> </textarea>
                 <input class="main-btn2"  name = "add"  type="submit" value="Submit">
               </div>
               <br>
@@ -134,8 +162,12 @@
             </form>
 
         <?php
+
+
     }
     ?>
+
+
           </div>
           <!--from w3doc-->
        
@@ -147,6 +179,9 @@
               <img  id="mailIcon" src="mail.png"  alt="mail icon"  class="contactIcons">
               </a>
       </div>
+
+
+
 
    </body>
 

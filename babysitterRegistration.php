@@ -9,8 +9,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-         <link rel="stylesheet" type="text/css" href="myStyle.css" >
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" >  -->
+        <!-- <link rel="stylesheet" type="text/css" href="myStyle.css" >
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" > -->
          <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="img/noBG2.png" />
     <style>
@@ -431,6 +431,7 @@ textarea {
                     $last_name = addslashes ($_POST['last_name']);
                     $email = addslashes ($_POST['email']);
                     $city = addslashes ($_POST['city']);
+                    //$nID = addslashes ($_POST['nID']);
                     $password = addslashes ($_POST['password']);
                     $phone = addslashes ($_POST['phone']);
                     $gender = addslashes ($_POST['gender']);
@@ -438,35 +439,47 @@ textarea {
                     $age = addslashes ($_POST['age']);
 
 
-                    $file = rand(1000,100000)."-".$_FILES['file']['name'];
-                    $file_loc = $_FILES['file']['tmp_name'];
-                    $file_size = $_FILES['file']['size'];
-                    $file_type = $_FILES['file']['type'];
-                    $folder="uploads/";
-
-                    $new_size = $file_size/1024;
-
-                    $new_file_name = strtolower($file);
-                    //$complaint_text = addslashes ($_POST['complaint_text']);
-                    $final_file=str_replace(' ','-',$new_file_name);
-
-                    move_uploaded_file($file_loc,$folder.$final_file);
-
-
-                    $sql = "INSERT INTO users ". "(password, first_name,last_name,email,city ,photo,role,phone,gender,bio,age
-               ) ". "VALUES('$password','$first_name','$last_name','$email','$city','$final_file','2','$phone','$gender','$bio','$age' )";
 
 
 
 
-                    if ($mysqli->query($sql) === TRUE) {
-                         echo "New record created successfully";
-                    } else {
-                         echo "Error: " . $sql . "<br>" . $mysqli->error;
+
+                $sql_email = "select count(*) as cunt from users where email ='$email'";
+
+                $result = $mysqli->query($sql_email);
+                while ($row = $result->fetch_assoc()) {
+                    if ($row['cunt'] > 0) {?>
+                    <div style=" text-align:center; color:red; font-size: 17px"> <?php echo "Email already exists\n"; ?> </div>
+                <?php } else {
+
+
+                        $file = rand(1000, 100000) . "-" . $_FILES['file']['name'];
+                        $file_loc = $_FILES['file']['tmp_name'];
+                        $file_size = $_FILES['file']['size'];
+                        $file_type = $_FILES['file']['type'];
+                        $folder = "uploads/";
+
+                        $new_size = $file_size / 1024;
+
+                        $new_file_name = strtolower($file);
+                        //$complaint_text = addslashes ($_POST['complaint_text']);
+                        $final_file = str_replace(' ', '-', $new_file_name);
+
+                        move_uploaded_file($file_loc, $folder . $final_file);
+
+
+                        $sql = "INSERT INTO users " . "(password, first_name,last_name,email,city,photo,role,phone,gender,bio,age
+               ) " . "VALUES('$password','$first_name','$last_name','$email','$city','$final_file','2','$phone','$gender','$bio','$age' )";
+
+
+                        if ($mysqli->query($sql) === TRUE) { ?>
+                            <div style="text-align:center; color:green;font-size: 17px"> <?php echo "Entered data successfully\n"; ?> </div>
+                        <?php } else {
+                            echo "error : " . $sql . "<br>" . $mysqli->error;
+                        }
+
                     }
-
-                    ?> <div style="width:500px; text-align:center; color:red"> <?php echo "Entered data successfully\n"; ?> </div>
-                    <?php
+                }
 
                     mysqli_close($mysqli);
                 }else {
@@ -478,6 +491,9 @@ textarea {
                         
                         <label> Last name:</label><span>*</span>
                         <input type="text"  name="last_name" id="last_name">
+
+                        <label>National ID :</label><span>*</span>
+                        <input type="text" name="nId" id="nID"pattern="^[0-9]{10}" autofocus required title="ENTER 10 DIGITS">
                         
                         <label> Age:</label><span>*</span>
                         <input type="number" name="age"  id="age">
@@ -485,7 +501,7 @@ textarea {
                         <tr><td colspan="1">
                         <label>  Gender:</label> <span>*</span></td>
                        <td colspan="1">   female 
-                       <input type="radio" name="gender" value="F"/>
+                       <input type="radio" name="gender" value="F">
                         male 
                         <input type="radio" name="gender" value="M"/></td></table>
                         
@@ -499,7 +515,7 @@ textarea {
                         <input type="password" name="password" id="password">
                         
                         <label> Phone number:</label><span>*</span>
-                        <input type="text" name="phone" id="phone">
+                        <input type="tel" name="phone" id="phone">
                         
                         <label> Bio:</label><span>*</span>
                        <textarea placeholder="your experience, educayion, languages spoken, skilles, etc... " name="bio" id="bio" > </textarea>
@@ -545,6 +561,8 @@ textarea {
             var city=document.myform.city.value;
             var password=document.myform.password.value;
             var x=document.myform.email.value;
+            var nId = document.getElementById("nID").value;
+
 
 
             if (first_name==null || first_name==""){
@@ -587,7 +605,20 @@ textarea {
                 alert("Bio can't be blank");
                 return false;
             }
-        }
+            // var user = document.getElementById("nId").value;
+            // var user2 = document.getElementById("nId");
+            // var re = /^[7-9][0-9]{9}$/;
+            // if (re.test(user)) {
+            //     alert("done");
+            //     return true;
+            // }
+            // else {
+            //     alert("not ");
+            //     user2.style.border = "red solid 3px";
+            //     return false;
+             }
+
+
     </script>
 
   </body>
